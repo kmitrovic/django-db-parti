@@ -88,3 +88,12 @@ class PartitionFunctionError(BasePartitionError):
             'Unsupported partition function for column type "{current}", supported column types for "{vendor}" backend are: {allowed}',
             **kwargs
         )
+
+
+class PartitionAutoDateColumnError(BasePartitionError):
+    "Unsupported columns with auto date set"
+    def __init__(self, **kwargs):
+        super(PartitionFunctionError, self).__init__(
+            'Unsupported partition function for columns with auto_now_add set in "{model}" class',
+            **kwargs
+        )

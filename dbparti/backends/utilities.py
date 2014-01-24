@@ -28,14 +28,23 @@ class DateTimeUtil(object):
         """Dynamically returns beginning and an end depending on the given period"""
         try:
             return getattr(self, '_get_{}_period'.format(self.period))()
-        except AttributeError:
+        except AttributeError, e:
+            if self.now is None:
+                # so now is not yet set, and therefore, the column is set to be
+                # auto_now_add
+                raise PartitionAutoDateColumnError(model=self.model)
+            # else
             import re
-            raise PartitionRangeError(
-                model=self.model,
-                current_value=self.period,
-                allowed_values=[re.match('_get_(\w+)_period', c).group(1) for c in dir(
-                    self) if re.match('_get_\w+_period', c) is not None]
-            )
+            allowed_values = [re.match('_get_(\w+)_period', c).group(1) for c in dir(
+                self) if re.match('_get_\w+_period', c) is not None]
+            if self.period not in allowed_values:
+                raise PartitionRangeError(
+                    model=self.model,
+                    current_value=self.period,
+                    allowed_values=allowed_values
+                )
+            # else, re-raise the original error
+            raise e
 
     def _get_day_period(self):
         """Returns beginning and an end for a day period"""
