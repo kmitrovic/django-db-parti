@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from dbparti.backends.exceptions import PartitionRangeError, PartitionAutoDateColumnError
+from dbparti.backends.exceptions import PartitionRangeError
 
 
 """Provides date and time calculations for some database backends"""
@@ -29,15 +29,6 @@ class DateTimeUtil(object):
         try:
             return getattr(self, '_get_{}_period'.format(self.period))()
         except AttributeError, e:
-            if self.now is None:
-                # so now is not yet set, and therefore, the column is set to be
-                # auto_now_add
-                raise PartitionAutoDateColumnError(
-                    model=self.model,
-                    current_value=self.period,
-                    allowed_values={} # no need for this exception
-                )
-            # else
             import re
             allowed_values = [re.match('_get_(\w+)_period', c).group(1) for c in dir(
                 self) if re.match('_get_\w+_period', c) is not None]
