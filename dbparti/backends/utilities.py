@@ -32,7 +32,11 @@ class DateTimeUtil(object):
             if self.now is None:
                 # so now is not yet set, and therefore, the column is set to be
                 # auto_now_add
-                raise PartitionAutoDateColumnError(model=self.model)
+                raise PartitionAutoDateColumnError(
+                    model=self.model,
+                    current_value=self.period,
+                    allowed_values={} # no need for this exception
+                )
             # else
             import re
             allowed_values = [re.match('_get_(\w+)_period', c).group(1) for c in dir(
