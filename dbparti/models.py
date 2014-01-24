@@ -1,6 +1,6 @@
 from django.db import models
 from dbparti import backend
-from dbparti.backends.exceptions import PartitionColumnError, PartitionTypeError
+from dbparti.backends.exceptions import PartitionColumnError, PartitionTypeError, PartitionAutoDateColumnError
 
 
 models.options.DEFAULT_NAMES += (
@@ -17,7 +17,14 @@ class Partitionable(models.Model):
 
         try:
             column_value = getattr(self, self._meta.partition_column)
-            column_type = self._meta.get_field(self._meta.partition_column).get_internal_type()
+            column = self._meta.get_field(self._meta.partition_column)
+            column_type = column.get_internal_type()
+            if column.auto_now_add or column.auto_now:
+                raise PartitionAutoDateColumnError(
+                    model=self.__class__.__name__,
+                    current_value=self._meta.partition_column,
+                    allowed_values=self._meta.get_all_field_names()
+                )
         except AttributeError:
             raise PartitionColumnError(
                 model=self.__class__.__name__,
