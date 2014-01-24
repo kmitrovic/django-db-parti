@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from dbparti.backends.exceptions import PartitionRangeError
+from dbparti.backends.exceptions import PartitionRangeError, PartitionAutoDateColumnError
 
 
 """Provides date and time calculations for some database backends"""
