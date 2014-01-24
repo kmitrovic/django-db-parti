@@ -93,7 +93,7 @@ class PartitionFunctionError(BasePartitionError):
 class PartitionAutoDateColumnError(BasePartitionError):
     "Unsupported columns with auto date set"
     def __init__(self, **kwargs):
-        super(PartitionFunctionError, self).__init__(
+        super(PartitionAutoDateColumnError, self).__init__(
             'Unsupported partition function for columns with auto_now_add set in "{model}" class',
             **kwargs
         )
